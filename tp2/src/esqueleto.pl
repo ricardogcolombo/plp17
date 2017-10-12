@@ -46,3 +46,4 @@ test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2
 tests :- forall(between(1,2,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
 
 test_contenido :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
+test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
