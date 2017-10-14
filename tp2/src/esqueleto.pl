@@ -27,14 +27,24 @@ adyacenteEnRango(T,F1,C1,F2,C2) :- adyacente(F1,C1,F2,C2), enRango(T,F2,C2).
 contenido(Tablero, Fila, Columna, Contenido) :- nth1(Fila, Tablero, ListaFilas), nth1(Columna, ListaFilas, Contenido).
 
 %disponible(+Tablero, ?Fila, ?Columna)
-disponible(T, F, C) :- contenido(T, F, C, Cont), var(Cont), adyacenteEnRango(T, F, C, FA, CA), contenido(T, FA, CA, ContA), var(ContA).
+disponible(T, F, C) :- contenido(T, F, C, Cont), var(Cont), forall( adyacenteEnRango(T, F, C, FA, CA), ( contenido(T, FA, CA, ContA), var(ContA) )).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
-puedoColocar(0, horizontal, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+puedoColocar(1, horizontal, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+
 puedoColocar(CantPiezas, horizontal, Tablero, Fila, Columna) :- setof(Var,(disponible(Tablero,Fila,Columna),
 																CantPiezasMenosUno is CantPiezas - 1 , 
 																CMasUno is Columna + 1, 
 																puedoColocar(CantPiezasMenosUno,horizontal,Tablero,Fila,CMasUno)),Set).
+
+puedoColocar(1, vertical, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+
+puedoColocar(CantPiezas, vertical, Tablero, Fila, Columna) :- setof(Var,(disponible(Tablero,Fila,Columna),
+																CantPiezasMenosUno is CantPiezas - 1 , 
+																FMasUno is Fila + 1, 
+																puedoColocar(CantPiezasMenosUno,vertical,Tablero,FMasUno,Coulmna)),Set).
+
+
 
 %ubicarBarcos(+Barcos, +?Tablero)
 
