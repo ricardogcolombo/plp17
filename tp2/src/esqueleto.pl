@@ -51,13 +51,25 @@ test(1) :- matriz(M,2,3), adyacenteEnRango(M,2,2,2,3).
 test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2, 1), (2, 2)]).
 tests :- forall(between(1,2,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
 
+% Ejercicio 1
 test_contenido :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
-
 test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 
-test_disponible :- matriz(M,3,3) , disponible(M,1,1).
+% Ejercicio 2
+test_disp_1:- matriz(M,2,3),disponible(M, 1, 1).
+test_disp_2:- disponible([[1, 2], [3, 4], [5, 6]], 1, 1).
+test_disp_3:- disponible([[1, 2], [X, Y], [5, 6]], 2, 1).
+test_disp_4:- disponible([[1, 2], [3, 4], [5, 6]], 3, 1).
 
-test_disponible_2 :- not(disponible([[1, 2], [3, 4], [5, 6]],1,1)).
+% Ejercicio 3
+
+% Ejercicio 4
+
+% Ejercicio 5
+
+% Ejercicio 6
+
+% Ejercicio 7
 
 test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I] ],1,1).
 
