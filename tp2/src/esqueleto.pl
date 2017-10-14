@@ -57,6 +57,9 @@ ubicarBarcos([Barco|Barcos],Tablero) :- setof(Var, (puedoColocar(Barco,Dir,Table
 %completarConAgua(+?Tablero)
 
 %golpear(+Tablero, +NumFila, +NumColumna, -NuevoTab)
+golpear(Tablero, NumFila, NumColumna, NuevoTab) :- forall(contenido(Tablero, Fila, Columna, Cont), 
+	contenido(NuevoTab, Fila, Columna, Cont); (Fila =:= NumFila, Columna =:= NumColumna)),
+	contenido(NuevoTab, NumFila, NumColumna, ~).
 
 % Completar instanciación soportada y justificar.
 %atacar(Tablero, Fila, Columna, Resultado, NuevoTab)
@@ -70,9 +73,9 @@ test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 % Ejercicio 2
 test_disp_1:- matriz(M,2,3),disponible(M, 1, 1).
 test_disp_2:- not(disponible([[1, 2], [3, 4], [5, 6]], 1, 1)).
-test_disp_3:- not(disponible([[1, 2], [X, Y], [5, 6]], 2, 1)).
+test_disp_3:- not(disponible([[1, 2], [_, _], [5, 6]], 2, 1)).
 test_disp_4:- not(disponible([[1, 2], [3, 4], [5, 6]], 3, 1)).
-test_disp_5:- disponible([[A, W, B, 1], [Y, X, Z, 1], [C, J, D, 1]], 2, 2).
+test_disp_5:- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
 
 % Ejercicio 3
 
@@ -80,6 +83,8 @@ test_disp_5:- disponible([[A, W, B, 1], [Y, X, Z, 1], [C, J, D, 1]], 2, 2).
 
 % Ejercicio 5
 
+test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
+test_golpear_2 :- not(golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]])).
 % Ejercicio 6
 
 % Ejercicio 7
@@ -89,5 +94,9 @@ test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I]
 test(1) :- matriz(M,2,3), adyacenteEnRango(M,2,2,2,3).
 test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2, 1), (2, 2)]).
 test(3) :- test_disp_1, test_disp_2, test_disp_3, test_disp_4, test_disp_5.
-tests :- forall(between(1,2,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
+test(4) :- test_golpear_1, test_golpear_2.
+
+test_puedoColocar_1 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
+
+tests :- forall(between(1,4,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
 
