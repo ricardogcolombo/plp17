@@ -30,6 +30,11 @@ contenido(Tablero, Fila, Columna, Contenido) :- nth1(Fila, Tablero, ListaFilas),
 disponible(T, F, C) :- contenido(T, F, C, Cont), var(Cont), adyacenteEnRango(T, F, C, FA, CA), contenido(T, FA, CA, ContA), var(ContA).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
+puedoColocar(0, horizontal, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+puedoColocar(CantPiezas, horizontal, Tablero, Fila, Columna) :- setof(Var,(disponible(Tablero,Fila,Columna),
+																CantPiezasMenosUno is CantPiezas - 1 , 
+																CMasUno is Columna + 1, 
+																puedoColocar(CantPiezasMenosUno,horizontal,Tablero,Fila,CMasUno)),Set).
 
 %ubicarBarcos(+Barcos, +?Tablero)
 
@@ -53,4 +58,6 @@ test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 test_disponible :- matriz(M,3,3) , disponible(M,1,1).
 
 test_disponible_2 :- not(disponible([[1, 2], [3, 4], [5, 6]],1,1)).
+
+test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I] ],1,1).
 
