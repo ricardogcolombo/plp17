@@ -44,9 +44,15 @@ puedoColocar(CantPiezas, vertical, Tablero, Fila, Columna) :- setof(Var,(disponi
 																FMasUno is Fila + 1, 
 																puedoColocar(CantPiezasMenosUno,vertical,Tablero,FMasUno,Coulmna)),Set).
 
+%insertarBarco(?+T,+X,+Y,+Len, Dir)
+insertarBarco(T,X,Y,1,Dir) :- contenido(T,X,Y,o).
+insertarBarco(T,X,Y,Len, horizontal) :- contenido(T,X,Y,o) , YMasUno is Y+1 , LenMenosUno is Len -1, insertarBarco(T,X,YMasUno,LenMenosUno,horizontal).
+insertarBarco(T,X,Y,Len, vertical) :- contenido(T,X,Y,o) , XMasUno is X+1 ,  LenMenosUno is Len -1, insertarBarco(T,XMasUno,Y,LenMenosUno,vertical).
 
 
 %ubicarBarcos(+Barcos, +?Tablero)
+ubicarBarcos([],Tablero).
+ubicarBarcos([Barco|Barcos],Tablero) :- setof(Var, (puedoColocar(Barco,Dir,Tablero,Fila,Columna), insertarBarco(Tablero,Fila,Columna,Barco,Dir), ubicarBarcos(Barcos,Tablero)), Set).
 
 %completarConAgua(+?Tablero)
 
