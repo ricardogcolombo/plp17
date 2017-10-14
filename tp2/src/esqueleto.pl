@@ -48,7 +48,6 @@ tests :- forall(between(1,2,N), test(N)). % Cambiar el 2 por la cantidad de test
 
 % Ejercicio 1
 test_contenido :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
-<<<<<<< HEAD
 test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 
 % Ejercicio 2
@@ -66,12 +65,4 @@ test_disp_4:- disponible([[1, 2], [3, 4], [5, 6]], 3, 1).
 % Ejercicio 6
 
 % Ejercicio 7
-=======
 
-test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
-
-test_disponible :- matriz(M,3,3) , disponible(M,1,1).
-
-test_disponible_2 :- not(disponible([[1, 2], [3, 4], [5, 6]],1,1)).
-
->>>>>>> 2f6f35179714385c4f9e2c7ebd08ab05381c74fc
