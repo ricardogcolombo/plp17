@@ -26,7 +26,8 @@ adyacenteEnRango(T,F1,C1,F2,C2) :- adyacente(F1,C1,F2,C2), enRango(T,F2,C2).
 %contenido(+?Tablero, ?Fila, ?Columna, ?Contenido)
 contenido(Tablero, Fila, Columna, Contenido) :- nth1(Fila, Tablero, ListaFilas), nth1(Columna, ListaFilas, Contenido).
 
-% disponible(+Tablero, ?Fila, ?Columna)
+%disponible(+Tablero, ?Fila, ?Columna)
+disponible(T, F, C) :- contenido(T, F, C, Cont), var(Cont), adyacenteEnRango(T, F, C, FA, CA), contenido(T, FA, CA, ContA), var(ContA).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
 
@@ -47,6 +48,7 @@ tests :- forall(between(1,2,N), test(N)). % Cambiar el 2 por la cantidad de test
 
 % Ejercicio 1
 test_contenido :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
+<<<<<<< HEAD
 test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 
 % Ejercicio 2
@@ -64,3 +66,12 @@ test_disp_4:- disponible([[1, 2], [3, 4], [5, 6]], 3, 1).
 % Ejercicio 6
 
 % Ejercicio 7
+=======
+
+test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
+
+test_disponible :- matriz(M,3,3) , disponible(M,1,1).
+
+test_disponible_2 :- not(disponible([[1, 2], [3, 4], [5, 6]],1,1)).
+
+>>>>>>> 2f6f35179714385c4f9e2c7ebd08ab05381c74fc
