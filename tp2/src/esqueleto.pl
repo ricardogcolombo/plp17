@@ -56,6 +56,13 @@ ubicarBarcos([Barco|Barcos],Tablero) :- setof(Var, (puedoColocar(Barco,Dir,Table
 
 %completarConAgua(+?Tablero)
 
+
+
+completarConAgua(Tablero) :-  flatten(Tablero,TableroFlat), maplist(nonvar,TableroFlat).
+
+completarConAgua(Tablero) :-  contenido(Tablero,X,Y,C), var(C), contenido(Tablero,X,Y,~),completarConAgua(Tablero) ,!.
+
+
 %golpear(+Tablero, +NumFila, +NumColumna, -NuevoTab)
 
 % Completar instanciación soportada y justificar.
