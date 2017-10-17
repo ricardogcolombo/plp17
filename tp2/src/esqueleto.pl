@@ -60,11 +60,6 @@ completarConAgua(Tablero) :-  flatten(Tablero,TableroFlat), maplist(nonvar,Table
 completarConAgua(Tablero) :-  contenido(Tablero,X,Y,C), var(C), contenido(Tablero,X,Y,~),completarConAgua(Tablero) ,!.
 
 
-%golpear(+Tablero, +NumFila, +NumColumna, -NuevoTab)
-%golpear(Tablero, NumFila, NumColumna, NuevoTab) :- forall(contenido(Tablero, Fila, Columna, Cont), 
-	%contenido(NuevoTab, Fila, Columna, Cont); (Fila =:= NumFila, Columna =:= NumColumna)),
-	%contenido(NuevoTab, NumFila, NumColumna, ~).
-
 replace([_|T], 1, X, [X|T]).
 replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
 replace(L, _, _, L). 
