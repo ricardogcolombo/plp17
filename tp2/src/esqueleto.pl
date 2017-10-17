@@ -56,21 +56,33 @@ ubicarBarcos([Barco|Barcos],Tablero) :- setof(Var, (puedoColocar(Barco,Dir,Table
 
 %completarConAgua(+?Tablero)
 
-
-
 completarConAgua(Tablero) :-  flatten(Tablero,TableroFlat), maplist(nonvar,TableroFlat).
-
 completarConAgua(Tablero) :-  contenido(Tablero,X,Y,C), var(C), contenido(Tablero,X,Y,~),completarConAgua(Tablero) ,!.
 
 
 %golpear(+Tablero, +NumFila, +NumColumna, -NuevoTab)
-golpear(Tablero, NumFila, NumColumna, NuevoTab) :- forall(contenido(Tablero, Fila, Columna, Cont), 
-	contenido(NuevoTab, Fila, Columna, Cont); (Fila =:= NumFila, Columna =:= NumColumna)),
-	contenido(NuevoTab, NumFila, NumColumna, ~).
+%golpear(Tablero, NumFila, NumColumna, NuevoTab) :- forall(contenido(Tablero, Fila, Columna, Cont), 
+	%contenido(NuevoTab, Fila, Columna, Cont); (Fila =:= NumFila, Columna =:= NumColumna)),
+	%contenido(NuevoTab, NumFila, NumColumna, ~).
+
+replace([_|T], 1, X, [X|T]).
+replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
+replace(L, _, _, L). 
+
+golpear(Tablero,Fila,Columna,NuevoTab) :- NuevoTabAux = Tablero, lists:nth1(Fila,NuevoTabAux,L), replace(L ,Columna,~,NuevaCol), replace(NuevoTabAux,Fila,NuevaCol,NuevoTab), !.  
 
 % Completar instanciación soportada y justificar.
+
 %atacar(Tablero, Fila, Columna, Resultado, NuevoTab)
 
+aguaOborde(Tablero,Fila,Columna) :- not(enRango(Tablero,Fila,Columna) ).
+
+aguaOborde(Tablero,Fila,Columna) :- contenido(Tablero,Fila,Columna,~).
+hundido(Tablero,Fila,Columna) :- FMasUno is Fila + 1 , FMenosUno is Fila - 1, CMasUno is Columna + 1, CMenosUno is Columna - 1, aguaOborde(Tablero,Fila,Columna) , aguaOborde(Tablero,FMasUno,Columna),aguaOborde(Tablero,FMenosUno,Columna), aguaOborde(Tablero,Fila,CMenosUno), aguaOborde(Tablero,Fila,CMasUno).
+
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), hundido(NuevoTab,Fila,Columna), Resultado = hundido.
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), not( hundido(NuevoTab,Fila,Columna) ), Resultado = tocado.
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,~), Resultado = agua, NuevoTab = Tablero.
 %------------------Tests:------------------%
 
 % Ejercicio 1
@@ -92,6 +104,7 @@ test_disp_5:- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
 
 test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
 test_golpear_2 :- not(golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]])).
+
 % Ejercicio 6
 
 % Ejercicio 7
