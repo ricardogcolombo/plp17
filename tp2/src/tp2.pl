@@ -107,13 +107,13 @@ test_ubicar_3:- matriz(M,3,2), not(ubicarBarcos([3,1],M)).
 test_ubicar_4:- matriz(M,10,10), ubicarBarcos([1,1,1,2],M).
 
 % Ejercicio 5
-test_completar_1:- matriz(M,3,2),ubicarBarcos([2,1],M), completarConAgua(M),compare((=),M,[[~, ~], [~, ~], [~, ~]]).
+test_completar_1:- matriz(M,3,2),ubicarBarcos([2,1],M), completarConAgua(M), member(M,[ [[~, o], [~, ~], [o, o]] , [[o, ~], [~, ~], [o, o]] , [[o, o], [~, ~], [~, o]], [[o, o], [~, ~], [o, ~]]]).
 test_completar_2:- matriz(M,3,2), completarConAgua(M),compare((=),M,[[~, ~], [~, ~], [~, ~]]).
 
 % Este test compara solo com el primero de los elementos en el set
-test_completar_3:- matriz(M,3,2), setof(Var,ubicarBarcos([1,1],M),Set), completarConAgua(M),compare((=),M,[[~, o], [~, ~], [~, o]]).
-test_completar_4:- matriz(M,3,2), ubicarBarcos([2,1],M),completarConAgua(M),compare((=),M,[[~, o], [~, ~], [o, o]]).
+test_completar_3:- matriz(M,3,2), ubicarBarcos([1,1],M),completarConAgua(M), member(M,[[[~, o], [~, ~], [~, o]], [[~, o], [~, ~], [o, ~]], [[o, ~], [~, ~], [~, o]], [[o, ~], [~, ~], [o, ~]]]).
 
+test_completar_4:- matriz(M,3,2), ubicarBarcos([2,1],M),completarConAgua(M), member(M,[ [[~, o], [~, ~], [o, o]] , [[o, ~], [~, ~], [o, o]] , [[o, o], [~, ~], [~, o]] , [[o, o], [~, ~], [o, ~]]]).
 % Ejercicio 6
 test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
 test_golpear_2 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]]).
