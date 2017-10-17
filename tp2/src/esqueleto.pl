@@ -119,7 +119,9 @@ test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6
 test_golpear_2 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]]).
 
 % Ejercicio 7
-test_atacar_1 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],1,1,Res,T).
+test_atacar_1 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],1,1,Res,T),Res=tocado.
+test_atacar_2:- not(atacar([[o, o], [⇠, ⇠], [⇠, o]],3,1,Res,T)).
+test_atacar_3 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],3,2,Res,T),Res=tocado.
 
 test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I] ],1,1).
 
@@ -130,6 +132,7 @@ test(4) :- test_golpear_1, test_golpear_2.
 test(5) :- test_completar_1,test_completar_2,test_completar_3,test_completar_4.
 test(6) :- test_ubicar_1,test_ubicar_2,test_ubicar_3,test_ubicar_4.
 test(7) :- test_puedoColocar_1,test_puedoColocar_2,test_puedoColocar_3,test_puedoColocar_4.
+test(8) :- test_atacar_1,test_atacar_2,test_atacar_3.
 
 test_puedoColocar_1 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
 
