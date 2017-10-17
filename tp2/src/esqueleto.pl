@@ -95,17 +95,31 @@ test_disp_4:- not(disponible([[1, 2], [3, 4], [5, 6]], 3, 1)).
 test_disp_5:- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
 
 % Ejercicio 3
+test_puedoColocar_1:- matriz(M,2,4), puedoColocar(3,Dir,M,F,C).
+test_puedoColocar_2:- matriz(M,2,3), contenido(M,2,1,o), puedoColocar(2,Dir,M,F,C).
+test_puedoColocar_3:- not(puedoColocar(2,[[_, _, _, 1], [_, _, _, 1],[_, _, _, 1]], horizontal,2, 2)).
+test_puedoColocar_4:- not(puedoColocar(5,[[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], vertical,3,3)).
 
 % Ejercicio 4
+test_ubicar_1:- matriz(M,3,2), ubicarBarcos([2,1],M).
+test_ubicar_2:- matriz(M,3,2), ubicarBarcos([1,1],M).
+test_ubicar_3:- matriz(M,3,2), not(ubicarBarcos([3,1],M)).
+test_ubicar_4:- matriz(M,10,10), ubicarBarcos([1,1,1,2],M).
 
 % Ejercicio 5
+test_completar_1:- matriz(M,3,2),ubicarBarcos([2,1],M), completarConAgua(M),compare((=),M,[[~, ~], [~, ~], [~, ~]]).
+test_completar_2:- matriz(M,3,2), completarConAgua(M),compare((=),M,[[~, ~], [~, ~], [~, ~]]).
 
-test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
-test_golpear_2 :- not(golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]])).
+% Este test compara solo com el primero de los elementos en el set
+test_completar_3:- matriz(M,3,2), setof(Var,ubicarBarcos([1,1],M),Set), completarConAgua(M),compare((=),M,[[~, o], [~, ~], [~, o]]).
+test_completar_4:- matriz(M,3,2), ubicarBarcos([2,1],M),completarConAgua(M),compare((=),M,[[~, o], [~, ~], [o, o]]).
 
 % Ejercicio 6
+test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
+test_golpear_2 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]]).
 
 % Ejercicio 7
+test_atacar_1 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],1,1,Res,T).
 
 test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I] ],1,1).
 
@@ -113,6 +127,9 @@ test(1) :- matriz(M,2,3), adyacenteEnRango(M,2,2,2,3).
 test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2, 1), (2, 2)]).
 test(3) :- test_disp_1, test_disp_2, test_disp_3, test_disp_4, test_disp_5.
 test(4) :- test_golpear_1, test_golpear_2.
+test(5) :- test_completar_1,test_completar_2,test_completar_3,test_completar_4.
+test(6) :- test_ubicar_1,test_ubicar_2,test_ubicar_3,test_ubicar_4.
+test(7) :- test_puedoColocar_1,test_puedoColocar_2,test_puedoColocar_3,test_puedoColocar_4.
 
 test_puedoColocar_1 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
 
