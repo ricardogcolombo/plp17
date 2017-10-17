@@ -73,16 +73,19 @@ golpear(Tablero,Fila,Columna,NuevoTab) :- NuevoTabAux = Tablero, lists:nth1(Fila
 
 % Completar instanciación soportada y justificar.
 
-%atacar(Tablero, Fila, Columna, Resultado, NuevoTab)
+
+%atacar(+Tablero, ?Fila, ?Columna, ?Resultado, ?NuevoTab)
+%Todos los parametros son reversibles, excepto Tablero, pues la implementacion usa fuertemente la precondicion que dice que lo que entra en este parametro esta correctamente instanciado.
 
 aguaOborde(Tablero,Fila,Columna) :- not(enRango(Tablero,Fila,Columna) ).
 
 aguaOborde(Tablero,Fila,Columna) :- contenido(Tablero,Fila,Columna,~).
 hundido(Tablero,Fila,Columna) :- FMasUno is Fila + 1 , FMenosUno is Fila - 1, CMasUno is Columna + 1, CMenosUno is Columna - 1, aguaOborde(Tablero,Fila,Columna) , aguaOborde(Tablero,FMasUno,Columna),aguaOborde(Tablero,FMenosUno,Columna), aguaOborde(Tablero,Fila,CMenosUno), aguaOborde(Tablero,Fila,CMasUno).
 
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), hundido(NuevoTab,Fila,Columna), Resultado = hundido.
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), not( hundido(NuevoTab,Fila,Columna) ), Resultado = tocado.
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- var(Resultado),contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,~), Resultado = agua, NuevoTab = Tablero.
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), hundido(NuevoTab,Fila,Columna), Resultado = hundido.
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), not( hundido(NuevoTab,Fila,Columna) ), Resultado = tocado.
+atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,~), Resultado = agua, NuevoTab = Tablero.
+
 %------------------Tests:------------------%
 
 % Ejercicio 1
