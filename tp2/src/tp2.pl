@@ -119,16 +119,32 @@ reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, Celda, FilaActual, Col
 
 
 %atacar(+Tablero, ?Fila, ?Columna, ?Resultado, ?NuevoTab)
+atacar(Tablero, NumFila, NumColumna, agua, Tablero) :- 
+    contenido(Tablero, NumFila, NumColumna, ~).
+
+atacar(Tablero, NumFila, NumColumna, hundido, NuevoTab) :- 
+    golpear(Tablero, NumFila, NumColumna, NuevoTab),
+    estaHundido(NuevoTab, NumFila, NumColumna).
+    
+atacar(Tablero, NumFila, NumColumna, tocado, NuevoTab) :- 
+    golpear(Tablero, NumFila, NumColumna, NuevoTab),
+    not(estaHundido(NuevoTab, NumFila, NumColumna)).
+
+
+estaHundido(Tablero, Fila, Columna) :- 
+    contenido(Tablero, Fila, Columna, ~), 
+    forall(
+        adyacenteEnRango(Tablero, Fila, Columna, FilaAdyacente, ColumnaAdyacente), 
+        contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ~)
+    ).
+
 %Todos los parametros son reversibles, excepto Tablero, pues la implementacion usa fuertemente la precondicion que dice que lo que entra en este parametro esta correctamente instanciado.
 
-aguaOborde(Tablero,Fila,Columna) :- not(enRango(Tablero,Fila,Columna) ).
+%aguaOborde(Tablero,Fila,Columna) :- not(enRango(Tablero,Fila,Columna) ).
 
-aguaOborde(Tablero,Fila,Columna) :- contenido(Tablero,Fila,Columna,~).
-hundido(Tablero,Fila,Columna) :- FMasUno is Fila + 1 , FMenosUno is Fila - 1, CMasUno is Columna + 1, CMenosUno is Columna - 1, aguaOborde(Tablero,Fila,Columna) , aguaOborde(Tablero,FMasUno,Columna),aguaOborde(Tablero,FMenosUno,Columna), aguaOborde(Tablero,Fila,CMenosUno), aguaOborde(Tablero,Fila,CMasUno).
+%aguaOborde(Tablero,Fila,Columna) :- contenido(Tablero,Fila,Columna,~).
+%hundido(Tablero,Fila,Columna) :- FMasUno is Fila + 1 , FMenosUno is Fila - 1, CMasUno is Columna + 1, CMenosUno is Columna - 1, aguaOborde(Tablero,Fila,Columna) , aguaOborde(Tablero,FMasUno,Columna),aguaOborde(Tablero,FMenosUno,Columna), aguaOborde(Tablero,Fila,CMenosUno), aguaOborde(Tablero,Fila,CMasUno).
 
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), hundido(NuevoTab,Fila,Columna), Resultado = hundido.
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,o), golpear(Tablero,Fila,Columna,NuevoTab), not( hundido(NuevoTab,Fila,Columna) ), Resultado = tocado.
-atacar(Tablero,Fila,Columna,Resultado,NuevoTab) :- contenido(Tablero,Fila,Columna,Cont) ,  contenido(Tablero,Fila,Columna,~), Resultado = agua, NuevoTab = Tablero.
 
 %------------------Tests:------------------%
 
@@ -144,8 +160,8 @@ test_disp_4:- not(disponible([[1, 2], [3, 4], [5, 6]], 3, 1)).
 test_disp_5:- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
 
 % Ejercicio 3
-test_puedoColocar_1:- matriz(M,2,4), puedoColocar(3,Dir,M,F,C).
-test_puedoColocar_2:- matriz(M,2,3), contenido(M,2,1,o), puedoColocar(2,Dir,M,F,C).
+test_puedoColocar_1:- matriz(M,2,4), puedoColocar(3,_Dir,M,_F,_C).
+test_puedoColocar_2:- matriz(M,2,3), contenido(M,2,1,o), puedoColocar(2,_Dir,M,_F,_C).
 test_puedoColocar_3:- not(puedoColocar(2,[[_, _, _, 1], [_, _, _, 1],[_, _, _, 1]], horizontal,2, 2)).
 test_puedoColocar_4:- not(puedoColocar(5,[[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], vertical,3,3)).
 test_puedoColocar_5 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
@@ -169,11 +185,13 @@ test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6
 test_golpear_2 :- golpear([[~, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
 
 % Ejercicio 7
-test_atacar_1 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],1,1,Res,T),Res=tocado.
-test_atacar_2:- not(atacar([[o, o], [⇠, ⇠], [⇠, o]],3,1,Res,T)).
-test_atacar_3 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],3,2,Res,T),Res=tocado.
+test_atacar_1 :- 
+    atacar([[o, o], [~, ~], [~, o]], 1, 1, tocado, [[~, o], [~, ~], [~, o]]).
+test_atacar_2:- atacar([[o, o], [~, ~], [~, o]], 3, 1, agua, [[o, o], [~, ~], [~, o]]).
+test_atacar_3 :- atacar([[o, o], [~, ~], [~, o]],3,2, hundido, [[o, o], [~, ~], [~, ~]]).
 
-test_puedoColocar :- puedoColocar(2,horizontal,[ [X, E ,Y], [Y, R, U], [Z, T, I] ],1,1).
+
+%test_puedoColocar :- puedoColocar(2,horizontal,[ [_X, _E ,_Y], [_Y, _R, _U], [_Z, _T, _I] ],1,1).
 
 test(1) :- matriz(M,2,3), adyacenteEnRango(M,2,2,2,3).
 test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2, 1), (2, 2)]).
