@@ -76,18 +76,45 @@ colocarBarco(Tablero, Longitud, Direccion, Fila, Columna) :-
 
 
 %completarConAgua(+?Tablero)
-% TODO: hacerlo con maplist/2
 completarConAgua(Tablero) :- maplist(completarFilaConAgua, Tablero).
 completarFilaConAgua(Fila) :- maplist(completarCeldaConAgua, Fila).
 completarCeldaConAgua(Celda) :- nonvar(Celda).
 completarCeldaConAgua(~).
 
-replace([_|T], 1, X, [X|T]).
-replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
-replace(L, _, _, L). 
 
-golpear(Tablero,Fila,Columna,NuevoTab) :- NuevoTabAux = Tablero, lists:nth1(Fila,NuevoTabAux,L), replace(L ,Columna,~,NuevaCol), replace(NuevoTabAux,Fila,NuevaCol,NuevoTab), !.  
+% golpear(+Tablero,+NumFila,+NumColumna,-NuevoTab)
+golpear(Tablero, Fila, Columna, NuevoTab) :- 
+    reemplazarFilas(Tablero, Fila, Columna, NuevoTab, 1, 1).
 
+reemplazarFilas([], _, _, [], _, _).
+reemplazarFilas([Fila|Filas], ReemplazarFila, ReemplazarColumna, [NuevaFila|NuevaFilas], FilaActual, ColumnaActual) :-
+	reemplazarFila(Fila, ReemplazarFila, ReemplazarColumna, NuevaFila, FilaActual, ColumnaActual),
+	SiguienteFila is FilaActual + 1,
+	reemplazarFilas(Filas, ReemplazarFila, ReemplazarColumna, NuevaFilas, SiguienteFila, ColumnaActual).
+
+reemplazarFila([], _, _, [], _, _).
+reemplazarFila([Celda|Celdas], ReemplazarFila, ReemplazarColumna, [NuevaCelda|NuevaCeldas], FilaActual, ColumnaActual) :-
+	reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, NuevaCelda, FilaActual, ColumnaActual),
+    SiguienteColumna is ColumnaActual + 1,
+	reemplazarFila(Celdas, ReemplazarFila, ReemplazarColumna, NuevaCeldas, FilaActual, SiguienteColumna).
+
+reemplazarCelda(_, ReemplazarFila, ReemplazarColumna, ~, ReemplazarFila, ReemplazarColumna).
+reemplazarCelda(Celda, ReemplazarFila, ColumnaActual, Celda, FilaActual, ColumnaActual) :-
+    FilaActual \= ReemplazarFila.
+reemplazarCelda(Celda, FilaActual, ReemplazarColumna, Celda, FilaActual, ColumnaActual) :-
+    ColumnaActual \= ReemplazarColumna.
+reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, Celda, FilaActual, ColumnaActual) :-
+    ColumnaActual \= ReemplazarColumna,
+    FilaActual \= ReemplazarFila.
+
+
+
+%    reemplazarPorAgua(Tablero, Fila, Columna, NuevoTab, 0, 0).
+
+%reemplazarPorAgua([], _, _, [], _, _).
+%reemplazarPorAgua([FilaOriginal|FilasOriginales], Fila, Columna, NuevoTab, 0, 0).
+	
+        
 % Completar instanciación soportada y justificar.
 
 
@@ -139,7 +166,7 @@ test_completar_3:- matriz(M,3,2), ubicarBarcos([1,1],M),completarConAgua(M), mem
 test_completar_4:- matriz(M,3,2), ubicarBarcos([2,1],M),completarConAgua(M), member(M,[ [[~, o], [~, ~], [o, o]] , [[o, ~], [~, ~], [o, o]] , [[o, o], [~, ~], [~, o]] , [[o, o], [~, ~], [o, ~]]]).
 % Ejercicio 6
 test_golpear_1 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
-test_golpear_2 :- golpear([[1, 2], [3, 4], [5, 6]], 1, 1, [[1, 2], [3, 4], [5, 6]]).
+test_golpear_2 :- golpear([[~, 2], [3, 4], [5, 6]], 1, 1, [[~, 2], [3, 4], [5, 6]]).
 
 % Ejercicio 7
 test_atacar_1 :- atacar([[o, o], [⇠, ⇠], [⇠, o]],1,1,Res,T),Res=tocado.
