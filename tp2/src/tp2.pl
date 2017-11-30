@@ -24,25 +24,41 @@ adyacenteEnRango(T,F1,C1,F2,C2) :- adyacente(F1,C1,F2,C2), enRango(T,F2,C2).
 %------------------Predicados a definir:------------------%
 
 %contenido(+?Tablero, ?Fila, ?Columna, ?Contenido)
-contenido(Tablero, Fila, Columna, Contenido) :- nth1(Fila, Tablero, ListaFilas), nth1(Columna, ListaFilas, Contenido).
+contenido(Tablero, Fila, Columna, Contenido) :- 
+    nth1(Fila, Tablero, ListaFilas), 
+    nth1(Columna, ListaFilas, Contenido).
 
 %disponible(+Tablero, ?Fila, ?Columna)
-disponible(T, F, C) :- contenido(T, F, C, Cont), var(Cont), forall( adyacenteEnRango(T, F, C, FA, CA), ( contenido(T, FA, CA, ContA), var(ContA) )).
+disponible(Tablero, Fila, Columna) :- 
+    contenido(Tablero, Fila, Columna, Contenido), 
+    var(Contenido), 
+    forall(
+        adyacenteEnRango(Tablero, Fila, Columna, FilaAdyacente, ColumnaAdyacente), 
+        (
+        	contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ContenidoAdyacente), 
+        	var(ContenidoAdyacente) 
+        )
+    ).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
-puedoColocar(1, horizontal, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+puedoColocar(1, _, Tablero, Fila, Columna) :-
+    disponible(Tablero, Fila, Columna).
 
-puedoColocar(CantPiezas, horizontal, Tablero, Fila, Columna) :- setof(Var,(disponible(Tablero,Fila,Columna),
-																CantPiezasMenosUno is CantPiezas - 1 , 
-																CMasUno is Columna + 1, 
-																puedoColocar(CantPiezasMenosUno,horizontal,Tablero,Fila,CMasUno)),Set).
+puedoColocar(CantPiezas, Direccion, Tablero, Fila, Columna) :-
+	disponible(Tablero, Fila, Columna),
+    siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
+    NuevaCantPiezas is CantPiezas - 1,
+    puedoColocar(NuevaCantPiezas, Direccion, Tablero, SiguienteFila, SiguienteColumna).
+    
+siguienteCelda(horizontal, Fila, Columna, SiguienteFila, SiguienteColumna) :- 
+    SiguienteFila is Fila,
+    SiguienteColumna is Columna + 1.
 
-puedoColocar(1, vertical, Tablero, Fila, Columna) :- disponible(Tablero,Fila,Columna) .
+siguienteCelda(vertical, Fila, Columna, SiguienteFila, SiguienteColumna) :- 
+    SiguienteFila is Fila + 1,
+    SiguienteColumna is Columna.
 
-puedoColocar(CantPiezas, vertical, Tablero, Fila, Columna) :- setof(Var,(disponible(Tablero,Fila,Columna),
-																CantPiezasMenosUno is CantPiezas - 1 , 
-																FMasUno is Fila + 1, 
-																puedoColocar(CantPiezasMenosUno,vertical,Tablero,FMasUno,Coulmna)),Set).
+%%% matriz(Tablero, 2, 4), puedoColocar(20, Direccion, Tablero, Fila, Columna)
 
 %insertarBarco(?+T,+X,+Y,+Len, Dir)
 insertarBarco(T,X,Y,1,Dir) :- contenido(T,X,Y,o).
@@ -99,6 +115,7 @@ test_puedoColocar_1:- matriz(M,2,4), puedoColocar(3,Dir,M,F,C).
 test_puedoColocar_2:- matriz(M,2,3), contenido(M,2,1,o), puedoColocar(2,Dir,M,F,C).
 test_puedoColocar_3:- not(puedoColocar(2,[[_, _, _, 1], [_, _, _, 1],[_, _, _, 1]], horizontal,2, 2)).
 test_puedoColocar_4:- not(puedoColocar(5,[[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], vertical,3,3)).
+test_puedoColocar_5 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
 
 % Ejercicio 4
 test_ubicar_1:- matriz(M,3,2), ubicarBarcos([2,1],M).
@@ -134,7 +151,6 @@ test(6) :- test_ubicar_1,test_ubicar_2,test_ubicar_3,test_ubicar_4.
 test(7) :- test_puedoColocar_1,test_puedoColocar_2,test_puedoColocar_3,test_puedoColocar_4.
 test(8) :- test_atacar_1,test_atacar_2,test_atacar_3.
 
-test_puedoColocar_1 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
 
 tests :- forall(between(1,4,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
 
