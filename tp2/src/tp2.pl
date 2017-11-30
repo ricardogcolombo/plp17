@@ -77,18 +77,10 @@ colocarBarco(Tablero, Longitud, Direccion, Fila, Columna) :-
 
 %completarConAgua(+?Tablero)
 % TODO: hacerlo con maplist/2
-completarConAgua([]).
-completarConAgua([Fila|Filas]) :-  
-    completarFilaConAgua(Fila),
-    completarConAgua(Filas).
-
-completarFilaConAgua([]).
-completarFilaConAgua([Celda|Celdas]) :-
-	completarCelda(Celda),
-    completarFilaConAgua(Celdas).
-
-completarCelda(Celda) :- nonvar(Celda).
-completarCelda(~).
+completarConAgua(Tablero) :- maplist(completarFilaConAgua, Tablero).
+completarFilaConAgua(Fila) :- maplist(completarCeldaConAgua, Fila).
+completarCeldaConAgua(Celda) :- nonvar(Celda).
+completarCeldaConAgua(~).
 
 replace([_|T], 1, X, [X|T]).
 replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
