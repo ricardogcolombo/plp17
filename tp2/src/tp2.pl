@@ -35,15 +35,15 @@ disponible(Tablero, Fila, Columna) :-
     forall(
         adyacenteEnRango(Tablero, Fila, Columna, FilaAdyacente, ColumnaAdyacente), 
         (
-        	contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ContenidoAdyacente), 
-        	var(ContenidoAdyacente) 
+            contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ContenidoAdyacente), 
+            var(ContenidoAdyacente) 
         )
     ).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
 puedoColocar(0, _, _, _, _).
 puedoColocar(CantPiezas, Direccion, Tablero, Fila, Columna) :-
-	disponible(Tablero, Fila, Columna),
+    disponible(Tablero, Fila, Columna),
     siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
     NuevaCantPiezas is CantPiezas - 1,
     puedoColocar(NuevaCantPiezas, Direccion, Tablero, SiguienteFila, SiguienteColumna).
@@ -59,6 +59,8 @@ siguienteCelda(vertical, Fila, Columna, SiguienteFila, SiguienteColumna) :-
 %%% matriz(Tablero, 2, 4), puedoColocar(20, Direccion, Tablero, Fila, Columna)
 
 %ubicarBarcos(+Barcos, +?Tablero)
+% NOTA: Si dos barcos tienen la misma longitud el resultado final los mostrará 
+% también intercalados. Se considera que la repetición en este caso proviene de las características de la entrada.
 ubicarBarcos([], _).
 ubicarBarcos([Longitud| Longitudes], Tablero) :- 
     puedoColocar(Longitud, Direccion, Tablero, Fila, Columna),
@@ -70,9 +72,9 @@ ubicarBarcos([Longitud| Longitudes], Tablero) :-
 colocarBarco(_, 0, _, _, _).
 colocarBarco(Tablero, Longitud, Direccion, Fila, Columna) :-
     contenido(Tablero, Fila, Columna, o),
-	siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
-	NuevaLongitud is Longitud - 1,
-	colocarBarco(Tablero, NuevaLongitud, Direccion, SiguienteFila, SiguienteColumna).
+    siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
+    NuevaLongitud is Longitud - 1,
+    colocarBarco(Tablero, NuevaLongitud, Direccion, SiguienteFila, SiguienteColumna).
 
 
 %completarConAgua(+?Tablero)
@@ -88,15 +90,15 @@ golpear(Tablero, Fila, Columna, NuevoTab) :-
 
 reemplazarFilas([], _, _, [], _, _).
 reemplazarFilas([Fila|Filas], ReemplazarFila, ReemplazarColumna, [NuevaFila|NuevaFilas], FilaActual, ColumnaActual) :-
-	reemplazarFila(Fila, ReemplazarFila, ReemplazarColumna, NuevaFila, FilaActual, ColumnaActual),
-	SiguienteFila is FilaActual + 1,
-	reemplazarFilas(Filas, ReemplazarFila, ReemplazarColumna, NuevaFilas, SiguienteFila, ColumnaActual).
+    reemplazarFila(Fila, ReemplazarFila, ReemplazarColumna, NuevaFila, FilaActual, ColumnaActual),
+    SiguienteFila is FilaActual + 1,
+    reemplazarFilas(Filas, ReemplazarFila, ReemplazarColumna, NuevaFilas, SiguienteFila, ColumnaActual).
 
 reemplazarFila([], _, _, [], _, _).
 reemplazarFila([Celda|Celdas], ReemplazarFila, ReemplazarColumna, [NuevaCelda|NuevaCeldas], FilaActual, ColumnaActual) :-
-	reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, NuevaCelda, FilaActual, ColumnaActual),
+    reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, NuevaCelda, FilaActual, ColumnaActual),
     SiguienteColumna is ColumnaActual + 1,
-	reemplazarFila(Celdas, ReemplazarFila, ReemplazarColumna, NuevaCeldas, FilaActual, SiguienteColumna).
+    reemplazarFila(Celdas, ReemplazarFila, ReemplazarColumna, NuevaCeldas, FilaActual, SiguienteColumna).
 
 reemplazarCelda(_, ReemplazarFila, ReemplazarColumna, ~, ReemplazarFila, ReemplazarColumna).
 reemplazarCelda(Celda, ReemplazarFila, ColumnaActual, Celda, FilaActual, ColumnaActual) :-
@@ -141,25 +143,37 @@ estaHundido(Tablero, Fila, Columna) :-
 %------------------Tests:------------------%
 
 % Ejercicio 1
-test_contenido :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
+test_contenido_1 :- contenido([[1, 2], [3, 4], [5, 6]], 1, 1, 1).
 test_contenido_2 :- contenido([[1, 2], [3, 4], [5, 6]], 2, 1, 3).
 
 % Ejercicio 2
-test_disp_1:- matriz(M,2,3),disponible(M, 1, 1).
-test_disp_2:- not(disponible([[1, 2], [3, 4], [5, 6]], 1, 1)).
-test_disp_3:- not(disponible([[1, 2], [_, _], [5, 6]], 2, 1)).
-test_disp_4:- not(disponible([[1, 2], [3, 4], [5, 6]], 3, 1)).
-test_disp_5:- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
+test_disp_1 :- matriz(M,2,3), disponible(M, 1, 1).
+test_disp_2 :- not(disponible([[1, 2], [3, 4], [5, 6]], 1, 1)).
+test_disp_3 :- not(disponible([[1, 2], [_, _], [5, 6]], 2, 1)).
+test_disp_4 :- not(disponible([[1, 2], [3, 4], [5, 6]], 3, 1)).
+test_disp_5 :- disponible([[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], 2, 2).
 
 % Ejercicio 3
-test_puedoColocar_1:- matriz(M,2,4), puedoColocar(3,_Dir,M,_F,_C).
-test_puedoColocar_2:- matriz(M,2,3), contenido(M,2,1,o), puedoColocar(2,_Dir,M,_F,_C).
-test_puedoColocar_3:- not(puedoColocar(2,[[_, _, _, 1], [_, _, _, 1],[_, _, _, 1]], horizontal,2, 2)).
-test_puedoColocar_4:- not(puedoColocar(5,[[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], vertical,3,3)).
-test_puedoColocar_5 :- matriz(M, 2, 4), puedoColocar(3, horizontal, M, 1, 1).
+test_puedoColocar_1:- matriz(M, 2, 4), aggregate_all(count, puedoColocar(3, _, M, _, _), 4).
+test_puedoColocar_2 :- 
+    matriz(M, 2, 4), 
+    puedoColocar(3, horizontal, M, 1, 1), 
+    puedoColocar(3, horizontal, M, 2, 1), 
+    puedoColocar(3, horizontal, M, 2, 1), 
+    puedoColocar(3, horizontal, M, 2, 2).
+
+test_puedoColocar_3 :- 
+    matriz(M, 2, 4), 
+    not(puedoColocar(3, horizontal, M, 1, 3)).
+
+test_puedoColocar_4:- not(puedoColocar(2, [[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], horizontal, 2, 2)).
+test_puedoColocar_5:- not(puedoColocar(5, [[_, _, _, 1], [_, _, _, 1], [_, _, _, 1]], vertical, 3, 3)).
+test_puedoColocar_6 :- 
+    matriz(M, 2, 4), 
+    puedoColocar(3, horizontal, M, 1, 1).
 
 % Ejercicio 4
-test_ubicar_1:- matriz(M,3,2), ubicarBarcos([2,1],M).
+test_ubicar_1 :- matriz(M,3,2), ubicarBarcos([2,1],M).
 test_ubicar_2:- matriz(M,3,2), ubicarBarcos([1,1],M).
 test_ubicar_3:- matriz(M,3,2), not(ubicarBarcos([3,1],M)).
 test_ubicar_4:- matriz(M,10,10), ubicarBarcos([1,1,1,2],M).
@@ -187,13 +201,16 @@ test_atacar_3 :- atacar([[o, o], [~, ~], [~, o]],3,2, hundido, [[o, o], [~, ~], 
 
 test(1) :- matriz(M,2,3), adyacenteEnRango(M,2,2,2,3).
 test(2) :- matriz(M,2,3), setof((F,C), adyacenteEnRango(M,1,1,F,C), [ (1, 2), (2, 1), (2, 2)]).
-test(3) :- test_disp_1, test_disp_2, test_disp_3, test_disp_4, test_disp_5.
-test(4) :- test_golpear_1, test_golpear_2.
-test(5) :- test_completar_1,test_completar_2,test_completar_3,test_completar_4.
-test(6) :- test_ubicar_1,test_ubicar_2,test_ubicar_3,test_ubicar_4.
-test(7) :- test_puedoColocar_1,test_puedoColocar_2,test_puedoColocar_3,test_puedoColocar_4.
-test(8) :- test_atacar_1,test_atacar_2,test_atacar_3.
+%test(3) :- test_disp_1, test_disp_2, test_disp_3, test_disp_4, test_disp_5.
+%test(4) :- test_golpear_1, test_golpear_2.
+%test(5) :- test_completar_1,test_completar_2,test_completar_3,test_completar_4.
+%test(6) :- test_ubicar_1,test_ubicar_2,test_ubicar_3,test_ubicar_4.
+%test(8) :- test_atacar_1,test_atacar_2,test_atacar_3.
+
+test(3) :- test_contenido_1, test_contenido_2.
+test(4) :- test_disp_1, test_disp_2, test_disp_3, test_disp_4, test_disp_5.
+test(5) :- test_puedoColocar_1, test_puedoColocar_2, test_puedoColocar_3, test_puedoColocar_4, test_puedoColocar_5, test_puedoColocar_6.
 
 
-tests :- forall(between(1,4,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
+tests :- forall(between(1,6,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
 
