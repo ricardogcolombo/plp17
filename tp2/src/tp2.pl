@@ -108,17 +108,16 @@ reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, Celda, FilaActual, Col
     FilaActual \= ReemplazarFila.
 
 
-
-%    reemplazarPorAgua(Tablero, Fila, Columna, NuevoTab, 0, 0).
-
-%reemplazarPorAgua([], _, _, [], _, _).
-%reemplazarPorAgua([FilaOriginal|FilasOriginales], Fila, Columna, NuevoTab, 0, 0).
-	
-        
 % Completar instanciación soportada y justificar.
 
-
-%atacar(+Tablero, ?Fila, ?Columna, ?Resultado, ?NuevoTab)
+%atacar(+Tablero, +NumFila, +NumColumna, ?Resultado, ?NuevoTab)
+% El predicado es reversible solamente en Resulta y NuevoTab. 
+% No es reversible en Tablero por la forma en que está escrito contenido: si el tablero no estuviera 
+% "parcialmente instanciado" (es decir, instanciada la matriz, pero no necesariamente su contenido),
+% seguiría generando listas de forma indefinida para unificar todos los posibles números de columnas.
+% Tampoco es reversible para NumFila y NumColumna por el uso del not en el caso de "tocado". Si la fila
+% o la columna no estuvieran instanciadas, el not (que se implementa con un !) evitaría que se sigan buscando 
+% soluciones luego de encontrada la primera. 
 atacar(Tablero, NumFila, NumColumna, agua, Tablero) :- 
     contenido(Tablero, NumFila, NumColumna, ~).
 
@@ -137,13 +136,6 @@ estaHundido(Tablero, Fila, Columna) :-
         adyacenteEnRango(Tablero, Fila, Columna, FilaAdyacente, ColumnaAdyacente), 
         contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ~)
     ).
-
-%Todos los parametros son reversibles, excepto Tablero, pues la implementacion usa fuertemente la precondicion que dice que lo que entra en este parametro esta correctamente instanciado.
-
-%aguaOborde(Tablero,Fila,Columna) :- not(enRango(Tablero,Fila,Columna) ).
-
-%aguaOborde(Tablero,Fila,Columna) :- contenido(Tablero,Fila,Columna,~).
-%hundido(Tablero,Fila,Columna) :- FMasUno is Fila + 1 , FMenosUno is Fila - 1, CMasUno is Columna + 1, CMenosUno is Columna - 1, aguaOborde(Tablero,Fila,Columna) , aguaOborde(Tablero,FMasUno,Columna),aguaOborde(Tablero,FMenosUno,Columna), aguaOborde(Tablero,Fila,CMenosUno), aguaOborde(Tablero,Fila,CMasUno).
 
 
 %------------------Tests:------------------%
