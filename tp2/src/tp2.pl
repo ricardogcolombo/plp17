@@ -41,9 +41,7 @@ disponible(Tablero, Fila, Columna) :-
     ).
 
 %puedoColocar(+CantPiezas, ?Direccion, +Tablero, ?Fila, ?Columna)
-puedoColocar(1, _, Tablero, Fila, Columna) :-
-    disponible(Tablero, Fila, Columna).
-
+puedoColocar(0, _, _, _, _).
 puedoColocar(CantPiezas, Direccion, Tablero, Fila, Columna) :-
 	disponible(Tablero, Fila, Columna),
     siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
@@ -60,15 +58,22 @@ siguienteCelda(vertical, Fila, Columna, SiguienteFila, SiguienteColumna) :-
 
 %%% matriz(Tablero, 2, 4), puedoColocar(20, Direccion, Tablero, Fila, Columna)
 
-%insertarBarco(?+T,+X,+Y,+Len, Dir)
-insertarBarco(T,X,Y,1,Dir) :- contenido(T,X,Y,o).
-insertarBarco(T,X,Y,Len, horizontal) :- contenido(T,X,Y,o) , YMasUno is Y+1 , LenMenosUno is Len -1, insertarBarco(T,X,YMasUno,LenMenosUno,horizontal).
-insertarBarco(T,X,Y,Len, vertical) :- contenido(T,X,Y,o) , XMasUno is X+1 ,  LenMenosUno is Len -1, insertarBarco(T,XMasUno,Y,LenMenosUno,vertical).
-
-
 %ubicarBarcos(+Barcos, +?Tablero)
-ubicarBarcos([],Tablero).
-ubicarBarcos([Barco|Barcos],Tablero) :- setof(Var, (puedoColocar(Barco,Dir,Tablero,Fila,Columna), insertarBarco(Tablero,Fila,Columna,Barco,Dir), ubicarBarcos(Barcos,Tablero)), Set).
+ubicarBarcos([], _).
+ubicarBarcos([Longitud| Longitudes], Tablero) :- 
+    puedoColocar(Longitud, Direccion, Tablero, Fila, Columna),
+    not((Direccion = horizontal, Longitud = 1)), % Esto es solamente para evitar contar los barcos de 1 elemento dos veces (una como horizontal y otra como vertical)
+    colocarBarco(Tablero, Longitud, Direccion, Fila, Columna),
+    ubicarBarcos(Longitudes, Tablero).
+
+%colocarBarco(?+Tablero, +Longitud, +Direccion, +Fila, +Columna)
+colocarBarco(_, 0, _, _, _).
+colocarBarco(Tablero, Longitud, Direccion, Fila, Columna) :-
+    contenido(Tablero, Fila, Columna, o),
+	siguienteCelda(Direccion, Fila, Columna, SiguienteFila, SiguienteColumna),
+	NuevaLongitud is Longitud - 1,
+	colocarBarco(Tablero, NuevaLongitud, Direccion, SiguienteFila, SiguienteColumna).
+
 
 %completarConAgua(+?Tablero)
 
