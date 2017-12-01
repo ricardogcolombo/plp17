@@ -95,29 +95,28 @@ completarCeldaConAgua(~).
 
 % golpear(+Tablero,+NumFila,+NumColumna,-NuevoTab)
 golpear(Tablero, Fila, Columna, NuevoTab) :- 
-    reemplazarFilas(Tablero, Fila, Columna, NuevoTab, 1, 1).
+    reemplazarFilas(Tablero, Fila, Columna, NuevoTab).
 
-reemplazarFilas([], _, _, [], _, _).
-reemplazarFilas([Fila|Filas], ReemplazarFila, ReemplazarColumna, [NuevaFila|NuevaFilas], FilaActual, ColumnaActual) :-
-    reemplazarFila(Fila, ReemplazarFila, ReemplazarColumna, NuevaFila, FilaActual, ColumnaActual),
-    SiguienteFila is FilaActual + 1,
-    reemplazarFilas(Filas, ReemplazarFila, ReemplazarColumna, NuevaFilas, SiguienteFila, ColumnaActual).
+reemplazarFilas([], _, _, []).
+reemplazarFilas([Fila|Filas], NumFila, NumColumna, [NuevaFila|NuevaFilas]) :-
+    reemplazarFila(Fila, NumFila, NumColumna, NuevaFila),
+    SiguienteFila is NumFila - 1,
+    reemplazarFilas(Filas, SiguienteFila, NumColumna, NuevaFilas).
 
-reemplazarFila([], _, _, [], _, _).
-reemplazarFila([Celda|Celdas], ReemplazarFila, ReemplazarColumna, [NuevaCelda|NuevaCeldas], FilaActual, ColumnaActual) :-
-    reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, NuevaCelda, FilaActual, ColumnaActual),
-    SiguienteColumna is ColumnaActual + 1,
-    reemplazarFila(Celdas, ReemplazarFila, ReemplazarColumna, NuevaCeldas, FilaActual, SiguienteColumna).
+reemplazarFila([], _, _, []).
+reemplazarFila([Celda|Celdas], NumFila, NumColumna, [NuevaCelda|NuevaCeldas]) :-
+    reemplazarCelda(Celda, NumFila, NumColumna, NuevaCelda),
+    SiguienteColumna is NumColumna - 1,
+    reemplazarFila(Celdas, NumFila, SiguienteColumna, NuevaCeldas).
 
-reemplazarCelda(_, ReemplazarFila, ReemplazarColumna, ~, ReemplazarFila, ReemplazarColumna).
-reemplazarCelda(Celda, ReemplazarFila, ColumnaActual, Celda, FilaActual, ColumnaActual) :-
-    FilaActual \= ReemplazarFila.
-reemplazarCelda(Celda, FilaActual, ReemplazarColumna, Celda, FilaActual, ColumnaActual) :-
-    ColumnaActual \= ReemplazarColumna.
-reemplazarCelda(Celda, ReemplazarFila, ReemplazarColumna, Celda, FilaActual, ColumnaActual) :-
-    ColumnaActual \= ReemplazarColumna,
-    FilaActual \= ReemplazarFila.
-
+reemplazarCelda(_, 1, 1, ~).
+reemplazarCelda(Celda, NumFila, 1, Celda) :- 
+    NumFila \= 1.
+reemplazarCelda(Celda, 1, NumColumna, Celda) :- 
+    NumColumna \= 1.
+reemplazarCelda(Celda, NumFila, NumColumna, Celda) :- 
+    NumFila \= 1,
+    NumColumna \= 1.
 
 % Completar instanciación soportada y justificar.
 
