@@ -63,10 +63,19 @@ siguienteCelda(vertical, Fila, Columna, SiguienteFila, SiguienteColumna) :-
 % también intercalados. Se considera que la repetición en este caso proviene de las características de la entrada.
 ubicarBarcos([], _).
 ubicarBarcos([Longitud| Longitudes], Tablero) :- 
-    puedoColocar(Longitud, Direccion, Tablero, Fila, Columna),
-    not((Direccion = horizontal, Longitud = 1)), % Esto es solamente para evitar contar los barcos de 1 elemento dos veces (una como horizontal y otra como vertical)
-    colocarBarco(Tablero, Longitud, Direccion, Fila, Columna),
+    ubicarUnBarco(Longitud, Tablero),
     ubicarBarcos(Longitudes, Tablero).
+
+% Un barco de longitud 1 orientado vertical u horizontalmente no puede distinguirse.
+ubicarUnBarco(1, Tablero) :-
+    disponible(Tablero, Fila, Columna),
+    contenido(Tablero, Fila, Columna, o).
+    
+ubicarUnBarco(Longitud, Tablero) :-
+    Longitud > 1,
+    puedoColocar(Longitud, Direccion, Tablero, Fila, Columna),
+    colocarBarco(Tablero, Longitud, Direccion, Fila, Columna).
+
 
 %colocarBarco(?+Tablero, +Longitud, +Direccion, +Fila, +Columna)
 colocarBarco(_, 0, _, _, _).
