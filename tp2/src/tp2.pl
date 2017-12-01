@@ -125,27 +125,27 @@ reemplazarCelda(Celda, NumFila, NumColumna, Celda) :-
 % No es reversible en Tablero por la forma en que está escrito contenido: si el tablero no estuviera 
 % "parcialmente instanciado" (es decir, instanciada la matriz, pero no necesariamente su contenido),
 % seguiría generando listas de forma indefinida para unificar todos los posibles números de columnas.
-% Tampoco es reversible para NumFila y NumColumna por el uso del not en el caso de "tocado". Si la fila
-% o la columna no estuvieran instanciadas, el not (que se implementa con un !) evitaría que se sigan buscando 
-% soluciones luego de encontrada la primera. 
+% Tampoco es reversible para NumFila y NumColumna porque "adyacenteEnRango" usa is y la operación artimética -
+% sobre los numeros de fila y columna, que necesita que sus operandos estén
+% instanciados, para verificar que la fila y la columna estén en el rango.
 atacar(Tablero, NumFila, NumColumna, agua, Tablero) :- 
     contenido(Tablero, NumFila, NumColumna, ~).
 
 atacar(Tablero, NumFila, NumColumna, hundido, NuevoTab) :- 
-    golpear(Tablero, NumFila, NumColumna, NuevoTab),
-    estaHundido(NuevoTab, NumFila, NumColumna).
+    contenido(Tablero, NumFila, NumColumna, o),
+    forall(
+        adyacenteEnRango(Tablero, NumFila, NumColumna, FilaAdyacente, ColumnaAdyacente),
+        contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ~)
+    ),
+    golpear(Tablero, NumFila, NumColumna, NuevoTab).
     
 atacar(Tablero, NumFila, NumColumna, tocado, NuevoTab) :- 
-    golpear(Tablero, NumFila, NumColumna, NuevoTab),
-    not(estaHundido(NuevoTab, NumFila, NumColumna)).
+    contenido(Tablero, NumFila, NumColumna, o),
+    adyacenteEnRango(Tablero, NumFila, NumColumna, FilaAdyacente, ColumnaAdyacente),
+    contenido(Tablero, FilaAdyacente, ColumnaAdyacente, o),
+    golpear(Tablero, NumFila, NumColumna, NuevoTab).
 
 
-estaHundido(Tablero, Fila, Columna) :- 
-    contenido(Tablero, Fila, Columna, ~), 
-    forall(
-        adyacenteEnRango(Tablero, Fila, Columna, FilaAdyacente, ColumnaAdyacente), 
-        contenido(Tablero, FilaAdyacente, ColumnaAdyacente, ~)
-    ).
 
 
 %------------------Tests:------------------%
@@ -210,7 +210,7 @@ test_golpear_2 :-
 test_atacar_1 :- 
     atacar([[o, o], [~, ~], [~, o]], 1, 1, tocado, [[~, o], [~, ~], [~, o]]).
 test_atacar_2:- atacar([[o, o], [~, ~], [~, o]], 3, 1, agua, [[o, o], [~, ~], [~, o]]).
-test_atacar_3 :- atacar([[o, o], [~, ~], [~, o]],3,2, hundido, [[o, o], [~, ~], [~, ~]]).
+test_atacar_3 :- atacar([[o, o], [~, ~], [~, o]], 3, 2, hundido, [[o, o], [~, ~], [~, ~]]).
 
 
 
@@ -223,7 +223,7 @@ test(5) :- test_puedoColocar_1, test_puedoColocar_2, test_puedoColocar_3, test_p
 test(6) :- test_ubicar_1, test_ubicar_2, test_ubicar_3, test_ubicar_4.
 test(7) :- test_completar_1,test_completar_2,test_completar_3,test_completar_4.
 test(8) :- test_golpear_1, test_golpear_2.
-test(9) :- test_atacar_1,test_atacar_2,test_atacar_3.
+test(9) :- test_atacar_1, test_atacar_2, test_atacar_3.
 
 
 tests :- forall(between(1,9,N), test(N)). % Cambiar el 2 por la cantidad de tests que tengan.
