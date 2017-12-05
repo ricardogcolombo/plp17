@@ -121,11 +121,11 @@ reemplazarCelda(Celda, NumFila, NumColumna, Celda) :-
 % Completar instanciación soportada y justificar.
 
 %atacar(+Tablero, +NumFila, +NumColumna, ?Resultado, ?NuevoTab)
-% El predicado es reversible solamente en Resulta y NuevoTab. 
-% No es reversible en Tablero por la forma en que está escrito contenido: si el tablero no estuviera 
+% El predicado es reversible solamente en Resultado y NuevoTab. 
+% No es reversible en Tablero por la forma en que está escrito "contenido": si el tablero no estuviera 
 % "parcialmente instanciado" (es decir, instanciada la matriz, pero no necesariamente su contenido),
 % seguiría generando listas de forma indefinida para unificar todos los posibles números de columnas.
-% Tampoco es reversible para NumFila y NumColumna porque "adyacenteEnRango" usa is y la operación artimética -
+% Tampoco es reversible para NumFila y NumColumna porque "adyacenteEnRango" usa is y la operación del motor artimético "-"
 % sobre los numeros de fila y columna, que necesita que sus operandos estén
 % instanciados, para verificar que la fila y la columna estén en el rango.
 atacar(Tablero, NumFila, NumColumna, agua, Tablero) :- 
